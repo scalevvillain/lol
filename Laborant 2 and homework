@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <locale.h>
+
+
+int main()
+{
+	setlocale(LC_CTYPE, "RUS");
+	getchar();
+	task1();
+	getchar();
+	task2();
+	getchar();
+	task3();
+}
+int task1()
+{
+	setlocale(LC_CTYPE, "RUS");
+	printf("1\n2\n3\n");
+	printf("1\n \t2\n \t\t3\n");
+	printf("%d %d %d %d ", 1, 2, 3, 4);
+	printf("\n%d\n \t%2d\n \t\t%3d\n \t\t\t%4d ", 1, 2, 3, 4);
+	printf("\n%10.3f\n ", 12.234657);
+	printf("\n%10.5f\n ", 12.234657);
+	printf("Остаток от деления %d на %d равен %d\n ", 7, 5, 7 % 5);
+	printf("Умножение %d на %d равно %d\n ", 2000, 4, 2000 * 4);
+	printf("%d разделить %d равно %d\n ", 5., 2., 5. / 2);
+	printf("%f разделить %f равно %f\n ", 5., 2., 5. / 2);
+	printf("%g разделить %g равно %g\n ", 5., 2., 5. / 2);
+	printf("%e разделить %e равно %e\n ", 5., 2., 5. / 2);
+
+
+}
+
+int task2()
+{
+	int N, K;
+	N = 9;
+	K = 55;
+	printf("Сейчас %d часов %d минут 00 секунд\n ", N, K);
+	printf("\nИдет %d минута суток\n", N * 60 + K);
+	printf("\nДо полуночи осталось %d часов и %d минут\n", 23 - N, 60 - K);
+	printf("\nС 8.00 прошло %d секунд\n", N * 3600 + K * 60 - 8 * 3600);
+	printf("\nТекущий час  = %5.5f суток  и текущая минута = %5.5f часа\n", N / 24., K / 60.);
+
+
+
+}
+int task3()
+{
+	float n = 3, L = 2333;
+	int k = 3, m = 5;
+	printf("%-s\n %8.0f\n %8.0f\n %12s\n %-122s %+010.5f\n ", "Дано:", n, L, "__________", "Ответ:", n / L);
+
+}
