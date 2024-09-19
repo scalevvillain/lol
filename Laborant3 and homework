@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <locale.h>
+#pragma warning(disable : 4996)
+#define _USE_MATH_DEFINES
+#define _CRT_SECURE_NO_DEPRECATE
+
+#define D 2.54
+#define D1 2.32166
+#define D2 2.7076
+
+#define M 1.852
+#define M1 1.609
+#define M2 1.475
+#define M3 7.468
+#define M4 7.4126
+
+
+
+#include <math.h>
+
+int main()
+
+{
+	setlocale(LC_CTYPE, "RUS");
+	getchar();
+	task1();
+	getchar();
+	task2();
+	getchar();
+	task2A();
+	getchar();
+	task3();
+
+}
+int task1()
+{
+	int num;
+	puts("введите число");
+	scanf("%d", &num);
+	int num1;
+	puts("введите число");
+	scanf("%d", &num1);
+
+	printf("Сумма чисел %d и %d равна %d ", num, num1, num + num1);
+	printf("Разность чисел %d и %d равна %d ", num, num1, num - num1);
+	printf("Произведение чисел %d и %d равна %d ", num, num1, num * num1);
+	printf("Частное чисел %d и %d равна %d ", num, num1, num / num1);
+}
+int task2()
+{
+	int dym;
+	float result;
+	puts("\n введите кол-во английских дюймов");
+	scanf("%d", &dym);
+	result = D * dym;
+	printf(" %d дюймов – это % .1f см ", dym, result);
+
+
+	puts("\n введите кол-во испанских дюймов");
+	scanf("%d", &dym);
+	result = D1 * dym;
+	printf(" %d дюймов – это % .1f см ", dym, result);
+
+
+	puts("\n введите кол-во старолитовских дюймов");
+	scanf("%d", &dym);
+	result = D2 * dym;
+	printf(" %d дюймов – это % .1f см ", dym, result);
+
+}
+
+int task2A()
+{
+
+	int dym;
+	float result;
+	puts("\n введите кол-во морских миль");
+	scanf("%d", &dym);
+	result = (M * dym);
+	printf(" %d миль – это %.1f км ", dym, result);
+
+
+	puts("\n введите кол-во сухопутных миль");
+	scanf("%d", &dym);
+	result = M1 * dym;
+	printf(" %d миль – это %.1f км ", dym, result);
+
+
+	puts("\n введите кол-во римских миль");
+	scanf("%d", &dym);
+	result = (M2 * dym);
+	printf(" %d миль – это %.1f км ", dym, result);
+
+	puts("\n введите кол-во старорусских миль");
+	scanf("%d", &dym);
+	result = M3 * dym;
+	printf(" %d миль – это %.1f км ", dym, result);
+
+	puts("\n введите кол-во географических миль");
+	scanf("%d", &dym);
+	result = M4 * dym;
+	printf(" %d миль – это %.1f км ", dym, result);
+
+}
+int task3()
+{
+	int a, b;
+	int res1, res2;
+	puts("\n Введите число бит");
+	scanf("%d", &a);
+	res1 = (a /8192);
+	printf("Число кбайт равно %d", res1);
+	puts("\n Введите число кбайт");
+	scanf("%d", &b);
+	res2 = (b *8192);
+	printf("Число бит равно %d", res2);
+}
