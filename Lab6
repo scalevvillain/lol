@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include<locale.h>
+#include <math.h>
+int lab6task1()
+{
+	int year;
+	puts("введите год:\n");
+	scanf("%i", &year);
+	int d;
+	d = year % 4;
+	if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) puts("год високосный\n");
+	else printf("\n%i год невисокосный\n", year);
+
+
+}
+int lab6task2(zx)
+{
+	float F;
+	double x;
+	scanf("%lf", &x);
+	F = x >= 8 ? -x * x - 9 : 1 / (x * x * x * x - 6);
+	printf("\n%.2f", F);
+
+	//КОНТРОЛЬНЫЙ ПРИМЕР 
+	//при х>=8 :100
+	//при х<8: 120 
+}
+
+int lab6task2_2(zy)
+{
+	float Func;
+	double y;
+	scanf("%i", &y);
+	Func = y >= 9 ? -y * y * y - 100 : 1 / (y * y * y * y - 9);
+	printf("\n%.2f", Func);
+}
+int lab4homework()
+{
+        int hours, minutes;
+
+        // Ввод часов и минут
+        printf("Введите часы (0-12): ");
+        scanf("%d", &hours);
+        printf("Введите минуты (0-59): ");
+        scanf("%d", &minutes);
+
+        // Проверка корректности ввода
+        if (hours < 0 || hours > 12 || minutes < 0 || minutes > 59) {
+            printf("Некорректный ввод. Часы должны быть от 0 до 12, а минуты от 0 до 59.\n");
+            return 1;
+        }
+
+        // Приведение часов к диапазону [0, 12)
+        if (hours == 12) {
+            hours = 0;
+        }
+
+        // Вычисление углов
+        double minute_angle = minutes * 6; // Угол минутной стрелки (6 градусов за минуту)
+        double hour_angle = (hours * 30) + (minutes * 0.5); // Угол часовой стрелки (30 градусов за час + 0.5 градуса за минуту)
+
+        // Вычисление разницы между углами
+        double angle_difference = hour_angle - minute_angle;
+
+        // Приведение разницы к положительному значению
+        if (angle_difference < 0) {
+            angle_difference += 360;
+        }
+
+        // Если угол меньше или равен 180 градусов, значит стрелки на одной линии
+        if (angle_difference == 0 || angle_difference == 180) {
+            printf("Стрелки находятся на одной линии в текущий момент времени.\n");
+        }
+        else {
+            printf("Стрелки не находятся на одной линии в текущий момент времени.\n");
+
+            // Поиск следующего времени, когда стрелки будут на одной линии
+            for (int i = 0; i < 720; i++) { // Проверяем 12 часов (720 минут)
+                int total_minutes = (hours * 60 + minutes + i) % 720;
+                int h = total_minutes / 60;
+                int m = total_minutes % 60;
+
+                minute_angle = m * 6;
+                hour_angle = (h % 12) * 30 + m * 0.5;
+                angle_difference = hour_angle - minute_angle;
+
+                if (angle_difference < 0) {
+                    angle_difference += 360;
+                }
+
+                if (angle_difference == 0 || angle_difference == 180) {
+                    printf("Следующий раз, когда стрелки будут на одной линии: %d часов и %d минут.\n", h, m);
+                    break;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+int main()
+{
+	setlocale(LC_CTYPE, "RUS");
+	lab6task1();
+	lab6task2();
+	lab6task2_2();
+	lab4homework();
+}
