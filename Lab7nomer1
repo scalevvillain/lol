@@ -1,26 +1,18 @@
 #include <stdio.h>
-#include <ctype.h>  
 #include <locale.h>
-
-int main() {
-setlocale(LC_CTYPE, "RUS");
-    char c;
-
-    printf("Введите символ: ");
-    scanf("%c", &c);
-
-    
-    if (isdigit(c)) {
-        printf("Это цифра.\n");
-    }
-    
-    else if (isalpha(c)) {
-        printf("Это буква.\n");
-    }
-    
-    else {
-        printf("Неизвестный символ.\n");
-    }
-
-    return 0;
+int main()
+{
+  setlocale(LC_ALL, "RUS");
+  char c;
+  printf("Введите букву или цифру: ");
+  scanf_s("%c", &c);//считывание с консоли
+  switch (c)
+  {
+  case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+    printf("это цифра.\n");
+    break;
+  default:
+    printf("это буква\n");
+  }
+  return 0;
 }
