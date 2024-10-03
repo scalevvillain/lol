@@ -55,7 +55,7 @@ void lab4homework()
 
     
     double minute_angle = minutes * 6; 
-    double hour_angle = (hours * 30) + (minutes * 0.5); // Угол часовой стрелки (30 градусов за час + 0.5 градуса за минуту)
+    double hour_angle = (hours * 30) + (minutes * 0.5); 
 
     
     double angle_difference = hour_angle - minute_angle;
