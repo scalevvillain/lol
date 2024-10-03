@@ -9,12 +9,12 @@ int main() {
     scanf("%lf", &num1);
     
     printf("Введите оператор (+, -, *, /): ");
-    scanf(" %c", &operator); // Обратите внимание на пробел перед %c для игнорирования пробелов
+    scanf(" %c", &operator); 
 
     printf("Введите второе число: ");
     scanf("%lf", &num2);
 
-    // Выполнение операции в зависимости от оператора
+    
     switch (operator) {
         case '+':
             result = num1 + num2;
