@@ -1,21 +1,22 @@
 #include <stdio.h>
-#include <ctype.h> // Для функции isdigit и isalpha
+#include <ctype.h> // 
+#include <locale.h>
 
 int main() {
     char c;
 
     printf("Введите символ: ");
-    scanf("%c", &c); // Считывание с консоли
+    scanf("%c", &c);
 
-    // Проверяем, является ли символ цифрой
+    
     if (isdigit(c)) {
         printf("Это цифра.\n");
     }
-    // Проверяем, является ли символ буквой
+    
     else if (isalpha(c)) {
         printf("Это буква.\n");
     }
-    // Если символ не буква и не цифра
+    
     else {
         printf("Неизвестный символ.\n");
     }
