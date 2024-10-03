@@ -54,7 +54,7 @@ void lab4homework()
     }
 
     
-    double minute_angle = minutes * 6; // Угол минутной стрелки (6 градусов за минуту)
+    double minute_angle = minutes * 6; 
     double hour_angle = (hours * 30) + (minutes * 0.5); // Угол часовой стрелки (30 градусов за час + 0.5 градуса за минуту)
 
     
@@ -73,7 +73,7 @@ void lab4homework()
         printf("Стрелки не находятся на одной линии в текущий момент времени.\n");
 
        
-        for (int i = 0; i < 720; i++) { // Проверяем 12 часов (720 минут)
+        for (int i = 0; i < 720; i++) { 
             int total_minutes = (hours * 60 + minutes + i) % 720;
             int h = total_minutes / 60;
             int m = total_minutes % 60;
