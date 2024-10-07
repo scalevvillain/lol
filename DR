@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <locale.h>
+
+int main() {
+    setlocale(LC_CTYPE, "RUS");
+    task1();
+    getchar();
+    task2();
+    getchar();
+    task3();
+    getchar();
+}
+int task1() {
+    int a;
+    printf("Введите сегодняшнее число:");
+    scanf_s("%d", &a);
+    printf("\033[31m");
+}
+int task2() {
+    printf("      *****     *****      \n");
+    printf("   *********   *********   \n");
+    printf(" ************* ************* \n");
+    printf("*****************************\n");
+    printf(" *************************** \n");
+    printf("  ***********************    \n");
+    printf("   *********************     \n");
+    printf("     *****************       \n");
+    printf("       *************         \n");
+    printf("         *********           \n");
+    printf("           *****             \n");
+    printf("            ***              \n");
+    printf("             *               \n");
+    printf("С   ДНЕМ   РОЖДЕНИЯ   НАШ   МИЛАШКА!!!                 \n");
+    printf("МЫ   ТЕБЯ   ОЧЕНЬ    СИЛЬНО  ЛЮБИМ                  \n");
+    printf("И    ЖЕЛАЕМ   ТЕБЕ   ВСЕГО   САМОГО    НАИЛУЧШЕГО    \n");
+
+
+    printf("\033[0m");
+}
+
+int task3(){
+    int b;
+    puts("Введите число:");
+    scanf_s("%d", &b);
+}
