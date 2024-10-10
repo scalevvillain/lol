@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+
+double function(double x) {
+    return pow(x, 3) + 3 * pow(x, 2) - 3;
+}
+
+int main() {
+    double start, end, step;
+
+    // Ввод диапазона и шага табуляции
+    printf("Введите начальное значение x: ");
+    scanf("%lf", &start);
+    
+    printf("Введите конечное значение x: ");
+    scanf("%lf", &end);
+    
+    printf("Введите шаг табуляции: ");
+    scanf("%lf", &step);
+
+    // Вывод заголовка таблицы
+    printf("n|   x   |   f(x)   |n");
+    printf("|-------|----------|n");
+
+    // Табулирование функции
+    for (double x = start; x <= end; x += step) {
+        printf("| %6.2f | %8.2f |n", x, function(x));
+    }
+
+    return 0;
+}
