@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <locale.h>
 #include <math.h>
 
 double function(double x) {
@@ -6,25 +7,23 @@ double function(double x) {
 }
 
 int main() {
+    setlocale(LC_ALL, "RUS");
     double start, end, step;
 
-    // Ввод диапазона и шага табуляции
     printf("Введите начальное значение x: ");
     scanf("%lf", &start);
-    
+
     printf("Введите конечное значение x: ");
     scanf("%lf", &end);
-    
+
     printf("Введите шаг табуляции: ");
     scanf("%lf", &step);
 
-    // Вывод заголовка таблицы
-    printf("n|   x   |   f(x)   |n");
-    printf("|-------|----------|n");
+    printf("\n|   x   |   f(x)   |\n");
+    printf("\n|-------|----------|\n");
 
-    // Табулирование функции
     for (double x = start; x <= end; x += step) {
-        printf("| %6.2f | %8.2f |n", x, function(x));
+        printf("| %6.2f | %8.2f |\n", x, function(x));
     }
 
     return 0;
