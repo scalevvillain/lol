@@ -3,79 +3,84 @@
 #include <math.h>
 int main()
 {
-  setlocale(LC_ALL, "RUS");
-  task1();
+    setlocale(LC_ALL, "RUS");
+    task1();
+    ;
 }
-int task01() 
+int task01()
 {
-  int a;
-  char c;
-  printf("Введите количество печатаемых символов и вид символа:\n");
-  scanf("%d %c", &a, &c);
-  for (int b = 1; b <= 1; b++) putchar('+');  
+    int a;
+    char c;
+    printf("Введите количество печатаемых символов и вид символа:\n");
+    scanf("%d %c", &a, &c);
+    for (int b = 1; b <= 1; b++) putchar('+');
     for (int start = 1; start <= a; start++) putchar(c);
-      for (int c = 1; c <= 1; c++) putchar('+');
+    for (int c = 1; c <= 1; c++) putchar('+');
 }
 int task02()
 {
-  int a;
-  int d;
-  char c;
-  char b;
-  printf("Введите количество символов и два любых символа:\n");
-  scanf("%d %c %c", &a, &c, &b);
-  for (int start = 1; start <= a / 2; start++) putchar(c);
-  for (int k = 1; k <= a / 2; k++) putchar(b);
+    int a;
+    int d;
+    char c;
+    char b;
+    printf("Введите количество символов и два любых символа:\n");
+    scanf("%d %c %c", &a, &c, &b);
+    for (int start = 1; start <= a / 2; start++) putchar(c);
+    for (int k = 1; k <= a / 2; k++) putchar(b);
 }
 int task03()
 {
-  int a;
-  char c;
-  printf("Введите количество печатаемых символов и вид символа:\n");
-  scanf("%d %c", &a, &c);
-  putchar('+');
-  for (int start = 1; start <= a; start++) 
-  {
-    putchar(c);
-    putchar('!');
-  }
-  putchar('+');
-  return 0;
+    int a;
+    char c;
+    printf("Введите количество печатаемых символов и вид символа:\n");
+    scanf("%d %c", &a, &c);
+    putchar('+');
+    for (int start = 1; start <= a; start++)
+    {
+        putchar(c);
+        putchar('!');
+    }
+    putchar('+');
+    return 0;
 }
 int ramka()
 {
-  printf("!");
-  for (int start = 1; start <= 3; start++)
-  {
+    printf("!");
+    for (int start = 1; start <= 3; start++)
+    {
+        putchar('*');
+    }
+    printf("\n");
     putchar('*');
-  }
-  printf("\n");
-  putchar('*');
-  printf("\n");
-  putchar('*');
-  printf("\n");
-  putchar('*');
-  printf("\n");
-  printf("!");
-  for (int start = 1; start <= 3; start++)
-  {
+    printf("\n");
     putchar('*');
-  }
+    printf("\n");
+    putchar('*');
+    printf("\n");
+    printf("!");
+    for (int start = 1; start <= 3; start++)
+    {
+        putchar('*');
+    }
 }
 int task1()
 {
-  int n,m,s,k,i;
-  k = 1;
-  s = 0;
-  printf("Введте число m:\n");
-  scanf("%d", &m);
-  printf("Введте число n:\n");
-  scanf("%d", &n);
-  for (int i = m; i >= n; i--)
-  {
-    s += i;
-    k++;
-    printf("Выполнено %d раз(а)\n", k++);
-  }
-  printf("Результат %d\n", s);
-}
+        int m, n;
+        int S = 0;
+        int I;
+        printf("Введите начальное значение (m): ");
+        scanf("%d", &m);
+        printf("Введите конечное значение (n): ");
+        scanf("%d", &n);
+
+        
+        if (m > n) {
+            printf("Начальное значение должно быть меньше или равно конечному значению\n");
+            return 1;
+        }
+        
+        for (I = m; I <= n; I++) {
+            S += I;
+        }
+        printf("Сумма целых чисел от %d до %d равна %d\n", m, n, S);
+    }
