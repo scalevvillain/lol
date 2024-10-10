@@ -1,30 +1,29 @@
 #include <stdio.h>
+#include <locale.h>
+
 
 int main() {
+    setlocale(LC_ALL, "RUS");
     int n;
     char symbol1, symbol2;
     char option;
 
-    // Ввод количества символов
     printf("Введите количество печатаемых символов: ");
     scanf("%d", &n);
 
-    // Ввод вида символов
     printf("Введите первый символ: ");
     scanf(" %c", &symbol1);
     printf("Хотите ввести второй символ? (y/n): ");
     scanf(" %c", &option);
-    
+
     if (option == 'y') {
         printf("Введите второй символ: ");
         scanf(" %c", &symbol2);
     }
-
-    // Ввод опции для печати
-    printf("Выберите опцию:n");
-    printf("1) Напечатать '+' в начале и/или в концеn");
-    printf("2) Полстроки одним символом, другую половину другимn");
-    printf("3) Печатать после каждого символа восклицательный знакn");
+    printf("Выберите опцию:\n");
+    printf("1) Напечатать '+' в начале и/или в конце\n");
+    printf("2) Полстроки одним символом, другую половину другим\n");
+    printf("3) Печатать после каждого символа восклицательный знак\n");
     int choice;
     printf("Введите номер опции: ");
     scanf("%d", &choice);
@@ -34,20 +33,23 @@ int main() {
         for (int i = 0; i < n; i++) {
             printf("%c", symbol1);
         }
-        printf("+n");
-    } else if (choice == 2) {
+        printf("+");
+    }
+    else if (choice == 2) {
         for (int i = 0; i < n / 2; i++) {
             printf("%c", symbol1);
         }
         for (int i = n / 2; i < n; i++) {
             printf("%c", symbol2);
         }
-        printf("n");
-    } else if (choice == 3) {
+        printf("\n");
+    }
+    else if (choice == 3) {
         for (int i = 0; i < n; i++) {
-            printf("%c!n", symbol1);
+            printf("%c!", symbol1);
         }
-    } else {
+    }
+    else {
         printf("Неверный выбор.n");
     }
 
