@@ -1,0 +1,135 @@
+import logging
+from random import randint
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ConversationHandler, ContextTypes
+
+# Настройка логирования
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+# Константы состояния для ConversationHandler
+CHOOSING, GUESS_NUMBER, PLAY_RPS = range(3)
+
+class GuessNumberGame:
+    def __init__(self):
+        self.target = None
+
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        self.target = randint(1, 100)
+        await update.message.reply_text(
+            "Я загадал число от 1 до 100. Попробуй угадать!",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return GUESS_NUMBER
+
+    async def guess(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        try:
+            guess = int(update.message.text)
+
+            if guess < self.target:
+                await update.message.reply_text('Мое число больше.')
+            elif guess > self.target:
+                await update.message.reply_text('Мое число меньше.')
+            else:
+                await update.message.reply_text('Ты угадал!')
+                return await self._play_again(update, context)
+        except ValueError:
+            await update.message.reply_text('Пожалуйста, введи целое число.')
+
+        return GUESS_NUMBER
+
+    async def _play_again(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        response_keyboard = [['Угадай число', 'Камень, ножницы, бумага']]
+        markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            'Хочешь сыграть еще раз? Выбери одну из игр.',
+            reply_markup=markup
+        )
+        return CHOOSING
+
+
+class RockPaperScissorsGame:
+    def __init__(self):
+        self.options = ['камень', 'ножницы', 'бумага']
+
+    async def play(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        user_choice = update.message.text.lower()
+        bot_choice = self.options[randint(0, 2)]
+
+        await update.message.reply_text(f'Ты выбрал: {user_choice}, я выбрал: {bot_choice}.')
+
+        if user_choice == bot_choice:
+            await update.message.reply_text('Ничья!')
+        elif (
+            (user_choice == 'камень' and bot_choice == 'ножницы') or \
+             (user_choice == 'ножницы' and bot_choice == 'бумага') or \
+             (user_choice == 'бумага' and bot_choice == 'камень')
+        ):
+            await update.message.reply_text('Ты выиграл!')
+        else:
+            await update.message.reply_text('Ты проиграл!')
+
+        return await self._play_again(update, context)
+
+    async def _play_again(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        response_keyboard = [['Угадай число', 'Камень, ножницы, бумага']]
+        markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            'Хочешь сыграть еще раз? Выбери одну из игр.',
+            reply_markup=markup
+        )
+        return CHOOSING
+
+
+class GameBot:
+    def __init__(self, token):
+        self.app = ApplicationBuilder().token(token).build()
+        self.guess_game = GuessNumberGame()
+        self.rps_game = RockPaperScissorsGame()
+        self.setup_handlers()
+
+    def setup_handlers(self):
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler('start', self.start)],
+            states={
+                CHOOSING: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.choose_game)],
+                GUESS_NUMBER: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.guess_game.guess)],
+                PLAY_RPS: [MessageHandler(filters.Regex('^(Камень|Ножницы|Бумага)$'), self.rps_game.play)],
+            },
+            fallbacks=[MessageHandler(filters.COMMAND, self.fallback)]
+        )
+        self.app.add_handler(conv_handler)
+
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        response_keyboard = [['Угадай число', 'Камень, ножницы, бумага']]
+        markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            "Привет! Хочешь сыграть в игру? Выбери одну из двух: 'Угадай число' или 'Камень, ножницы, бумага'.",
+            reply_markup=markup
+        )
+        return CHOOSING
+
+    async def choose_game(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        choice = update.message.text
+        if choice == 'Угадай число':
+            return await self.guess_game.start(update, context)
+        elif choice == 'Камень, ножницы, бумага':
+            response_keyboard = [['Камень', 'Ножницы', 'Бумага']]
+            markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+            await update.message.reply_text(
+                "Выбери: Камень, Ножницы или Бумага.",
+                reply_markup=markup
+            )
+            return PLAY_RPS
+
+    async def fallback(self, update: Update, _: ContextTypes.DEFAULT_TYPE) -> int:
+        await update.message.reply_text('Я тебя не понимаю. Выбери одну из игр или напиши /start для начала.')
+        return CHOOSING
+
+    def run(self):
+        self.app.run_polling()
+
+
+if __name__ == '__main__':
+    TOKEN = '7626619524:AAF-jMm2KHTLBHNjzN9piBKFIB5lNbYJaVc'
+    bot = GameBot(TOKEN)
+    bot.run()
