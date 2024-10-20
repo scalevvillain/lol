@@ -3,11 +3,12 @@
 
 int main() {
     setlocale(LC_CTYPE, "RUS");
+    getchar();
     task1();
     getchar();
     task2();
     getchar();
-    
+
 }
 int task1() {
     int a;
@@ -18,7 +19,7 @@ int task1() {
     printf("\n");
     printf("----------------------------------------------------------------------");
     printf("\n");
-    
+
 }
 int task2() {
     printf("      *****     *****      \n");
