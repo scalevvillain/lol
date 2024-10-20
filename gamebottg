@@ -59,11 +59,9 @@ class RockPaperScissorsGame:
 
         if user_choice == bot_choice:
             await update.message.reply_text('Ничья!')
-        elif (
-            (user_choice == 'камень' and bot_choice == 'ножницы') or \
-             (user_choice == 'ножницы' and bot_choice == 'бумага') or \
-             (user_choice == 'бумага' and bot_choice == 'камень')
-        ):
+        elif (user_choice == 'камень' or bot_choice == 'ножницы') or \
+             (user_choice == 'ножницы' or bot_choice == 'бумага') or \
+             (user_choice == 'бумага' or bot_choice == 'камень'):
             await update.message.reply_text('Ты выиграл!')
         else:
             await update.message.reply_text('Ты проиграл!')
@@ -95,6 +93,7 @@ class GameBot:
                 GUESS_NUMBER: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.guess_game.guess)],
                 PLAY_RPS: [MessageHandler(filters.Regex('^(Камень|Ножницы|Бумага)$'), self.rps_game.play)],
             },
+
             fallbacks=[MessageHandler(filters.COMMAND, self.fallback)]
         )
         self.app.add_handler(conv_handler)
@@ -122,8 +121,17 @@ class GameBot:
             return PLAY_RPS
 
     async def fallback(self, update: Update, _: ContextTypes.DEFAULT_TYPE) -> int:
-        await update.message.reply_text('Я тебя не понимаю. Выбери одну из игр или напиши /start для начала.')
-        return CHOOSING
+        if update.message.text == '/start':
+            response_keyboard = [['Угадай число', 'Камень, ножницы, бумага']]
+            markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+            await update.message.reply_text(
+                "Привет! Хочешь сыграть в игру? Выбери одну из двух: 'Угадай число' или 'Камень, ножницы, бумага'.",
+                reply_markup=markup
+            )
+            return CHOOSING
+        else:
+            await update.message.reply_text('Я тебя не понимаю. Выбери одну из игр или напиши /start для начала.')
+            return CHOOSING
 
     def run(self):
         self.app.run_polling()
