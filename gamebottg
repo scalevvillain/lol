@@ -132,6 +132,24 @@ class GameBot:
         else:
             await update.message.reply_text('Я тебя не понимаю. Выбери одну из игр или напиши /start для начала.')
             return CHOOSING
+    async def end_game(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        await update.message.reply_text("Спасибо за игру! Надеюсь, тебе понравилось. До свидания!")
+        return CHOOSING  # Возвращаем к выбору игры
+
+    def setup_handlers(self):
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler('start', self.start)],
+            states={
+                CHOOSING: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.choose_game)],
+                GUESS_NUMBER: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.guess_game.guess)],
+                PLAY_RPS: [MessageHandler(filters.Regex('^(Камень|Ножницы|Бумага)$'), self.rps_game.play)],
+            },
+            fallbacks=[
+                CommandHandler('end', self.end_game),
+                MessageHandler(filters.COMMAND, self.fallback)
+            ]
+        )
+        self.app.add_handler(conv_handler)
 
     def run(self):
         self.app.run_polling()
