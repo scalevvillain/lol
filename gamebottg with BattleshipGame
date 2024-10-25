@@ -1,0 +1,202 @@
+import logging
+from random import randint
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ConversationHandler, ContextTypes
+
+# Настройка логирования
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+# Константы состояния для ConversationHandler
+CHOOSING, GUESS_NUMBER, PLAY_RPS, BATTLESHIP = range(4)
+
+class GuessNumberGame:
+    def __init__(self):
+        self.target = None
+
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        self.target = randint(1, 100)
+        await update.message.reply_text(
+            "Я загадал число от 1 до 100. Попробуй угадать!",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return GUESS_NUMBER
+
+    async def guess(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        try:
+            guess = int(update.message.text)
+
+            if guess < self.target:
+                await update.message.reply_text('Мое число больше.')
+            elif guess > self.target:
+                await update.message.reply_text('Мое число меньше.')
+            else:
+                await update.message.reply_text('Ты угадал!')
+                return await self._play_again(update, context)
+        except ValueError:
+            await update.message.reply_text('Пожалуйста, введи целое число.')
+
+        return GUESS_NUMBER
+
+    async def _play_again(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        response_keyboard = [['Угадай число', 'Камень, ножницы, бумага', 'Морской бой']]
+        markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            'Хочешь сыграть еще раз? Выбери одну из игр.',
+            reply_markup=markup
+        )
+        return CHOOSING
+
+
+class RockPaperScissorsGame:
+    def __init__(self):
+        self.options = ['камень', 'ножницы', 'бумага']
+
+    async def play(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        user_choice = update.message.text.lower()
+        bot_choice = self.options[randint(0, 2)]
+
+        await update.message.reply_text(f'Ты выбрал: {user_choice}, я выбрал: {bot_choice}.')
+
+        if user_choice == bot_choice:
+            await update.message.reply_text('Ничья!')
+        elif (user_choice == 'камень' and bot_choice == 'ножницы') or\
+             (user_choice == 'ножницы' and bot_choice == 'бумага') or\
+             (user_choice == 'бумага' and bot_choice == 'камень'):
+            await update.message.reply_text('Ты выиграл!')
+        else:
+            await update.message.reply_text('Ты проиграл!')
+
+        return await self._play_again(update, context)
+
+    async def _play_again(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        response_keyboard = [['Угадай число', 'Камень, ножницы, бумага', 'Морской бой']]
+        markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            'Хочешь сыграть еще раз? Выбери одну из игр.',
+            reply_markup=markup
+        )
+        return CHOOSING
+
+
+class BattleshipGame:
+    def __init__(self):
+        self.board_size = 5
+        self.board = [['⬜️'] * self.board_size for _ in range(self.board_size)]
+        self.ship_position = (randint(0, self.board_size - 1), randint(0, self.board_size - 1))
+        self.guesses = 0
+        self.used_coordinates = set()
+
+    def display_board(self):
+        board_display = '\n'.join([' '.join(row) for row in self.board])
+        return f"Вот твое поле:\n{board_display}"
+
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        self.board = [['⬜️'] * self.board_size for _ in range(self.board_size)]
+        self.ship_position = (randint(0, self.board_size - 1), randint(0, self.board_size - 1))
+        self.guesses = 0
+        await update.message.reply_text(self.display_board())
+        await update.message.reply_text("Попробуй угадать координаты корабля в формате 'x y' (например, '1 2').")
+        return BATTLESHIP
+
+    async def guess(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        try:
+            x, y = map(int, update.message.text.split())
+            if (x, y) == self.ship_position:
+                await update.message.reply_text(f"Поздравляю! Ты потопил мой корабль за {self.guesses + 1} попыток!")
+                return await self._play_again(update, context)
+            elif 0 <= x < self.board_size and 0 <= y < self.board_size:
+                self.guesses += 1
+                self.board[x][y] = '❌'
+                await update.message.reply_text("Промах!")
+            else:
+                await update.message.reply_text("Координаты вне поля. Попробуй снова.")
+            if (x, y) in self.used_coordinates:
+                await update.message.reply_text('Эти координаты уже были использованы. Попробуй снова.')
+                return BATTLESHIP
+
+            self.guesses += 1
+            self.used_coordinates.add((x, y))
+
+            await update.message.reply_text(self.display_board())
+            return BATTLESHIP
+        except ValueError:
+            await update.message.reply_text("Пожалуйста, введи координаты в формате 'x y'.")
+            return BATTLESHIP
+
+    async def _play_again(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        response_keyboard = [['Угадай число', 'Камень, ножницы, бумага', 'Морской бой']]
+        markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            'Хочешь сыграть еще раз? Выбери одну из игр.',
+            reply_markup=markup
+        )
+        return CHOOSING
+
+
+class GameBot:
+    def __init__(self, token):
+        self.app = ApplicationBuilder().token(token).build()
+        self.guess_game = GuessNumberGame()
+        self.rps_game = RockPaperScissorsGame()
+        self.battleship_game = BattleshipGame()
+        self.setup_handlers()
+
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        response_keyboard = [['Угадай число', 'Камень, ножницы, бумага', 'Морской бой']]
+        markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            "Привет! Хочешь сыграть в игру? Выбери одну из трех: 'Угадай число', 'Камень, ножницы, бумага' или 'Морской бой'.",
+            reply_markup=markup
+        )
+        return CHOOSING
+
+    async def choose_game(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        choice = update.message.text
+        if choice == 'Угадай число':
+            return await self.guess_game.start(update, context)
+        elif choice == 'Камень, ножницы, бумага':
+            response_keyboard = [['Камень', 'Ножницы', 'Бумага']]
+            markup = ReplyKeyboardMarkup(response_keyboard, one_time_keyboard=True)
+            await update.message.reply_text(
+                "Выбери: Камень, Ножницы или Бумага.",
+                reply_markup=markup
+            )
+            return PLAY_RPS
+        elif choice == 'Морской бой':
+            return await self.battleship_game.start(update, context)
+
+    async def fallback(self, update: Update, _: ContextTypes.DEFAULT_TYPE) -> int:
+        if update.message.text == '/start':
+            return await self.start(update, _)
+        else:
+            await update.message.reply_text('Я тебя не понимаю. Выбери одну из игр или напиши /start для начала.')
+            return CHOOSING
+
+    async def end_game(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        await update.message.reply_text("Спасибо за игру! Надеюсь, тебе понравилось. До свидания!")
+        return CHOOSING  # Возвращаем к выбору игры
+
+    def setup_handlers(self):
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler('start', self.start)],
+            states={
+                CHOOSING: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.choose_game)],
+                GUESS_NUMBER: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.guess_game.guess)],
+                PLAY_RPS: [MessageHandler(filters.Regex('^(Камень|Ножницы|Бумага)$'), self.rps_game.play)],
+                BATTLESHIP: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.battleship_game.guess)],
+            },
+            fallbacks=[
+                CommandHandler('end', self.end_game),
+                MessageHandler(filters.COMMAND, self.fallback)
+            ]
+        )
+        self.app.add_handler(conv_handler)
+
+    def run(self):
+        self.app.run_polling()
+
+
+if __name__ == '__main__':
+    TOKEN = '7626619524:AAF-jMm2KHTLBHNjzN9piBKFIB5lNbYJaVc'  # Замените на ваш токен бота
+    bot = GameBot(TOKEN)
+    bot.run()
