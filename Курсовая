@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include<locale.h>
+
+// Структура для хранения данных о линии розлива
+typedef struct {
+    char line_id[10];
+    int time_hours;
+    int time_minutes;
+    int time_seconds;
+    int speed;
+    int volume;
+    char status[20];
+} LineData;
+
+// Функция для получения данных о линии розлива
+LineData getLineData() {
+    LineData line_data;
+
+    printf("Введите данные о линии розлива:\n");
+    printf("Линия: ");
+    scanf("%s", line_data.line_id);
+    getchar();
+    printf("Время (часы:минуты:секунды): ");
+    scanf("%d:%d:%d", &line_data.time_hours, &line_data.time_minutes, &line_data.time_seconds);
+    printf("Скорость (шт/мин): ");
+    scanf("%d", &line_data.speed);
+    printf("Объем (мл): ");
+    scanf("%d", &line_data.volume);
+    printf("Статус: ");
+    scanf("%s", line_data.status);
+
+    return line_data;
+}
+
+// Функция для проверки соответствия данных заданным значениям
+int validateLineData(LineData line_data) {
+    // Замените эти значения на ваши реальные ограничения
+    int min_speed = 50;
+    int max_speed = 150;
+    int min_volume = 250;
+    int max_volume = 600;
+
+    if (line_data.speed < min_speed || line_data.speed > max_speed) {
+        printf("Скорость не соответствует заданным значениям.\n");
+        return 0;
+    }
+
+    if (line_data.volume < min_volume || line_data.volume > max_volume) {
+        printf("Объем не соответствует заданным значениям.\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// Функция для сохранения данных о линии в файл
+void saveLineDataToFile(LineData line_data) {
+    FILE* file = fopen("line_data.txt", "a");
+
+    if (file == NULL) {
+        printf("Ошибка открытия файла.\n");
+        return;
+    }
+    fprintf(file, "%s;%d:%d:%d;%d;%d;%s\n",
+        line_data.line_id,
+        line_data.time_hours,
+        line_data.time_minutes,
+        line_data.time_seconds,
+        line_data.speed,
+        line_data.volume,
+        line_data.status);
+
+    fclose(file);
+}
+
+int main() {
+    setlocale(LC_CTYPE, "RUS");
+    LineData line_data;
+
+    line_data = getLineData();
+
+    if (validateLineData(line_data)) {
+        saveLineDataToFile(line_data);
+        printf("Данные о линии успешно сохранены в файл.\n");
+    }
+    else {
+        printf("Данные о линии не соответствуют заданным значениям.\n");
+    }
+
+    return 0;
+}
