@@ -1,0 +1,167 @@
+#include <stdio.h>
+
+int main() {
+    char c = 1;
+    short int si = 1;
+    unsigned short int usi = 1;
+    int i = 1;
+    unsigned char uc = 1;
+    wchar_t wc = 1;
+    long long int lli = 1;
+    size_t sz = 1;
+    float f = 1.0;
+    double d = 1.0;
+    signed int sint = 1;
+
+    // Вычисление размера char
+    while (c != 0) {
+        c <<= 1;
+    }
+    printf("Размер char: %zu байт\n", c / 8);
+
+    // Вычисление размера short int
+    while (si != 0) {
+        si <<= 1;
+    }
+    printf("Размер short int: %zu байт\n", si / 8);
+
+    // Вычисление размера unsigned short int
+    while (usi != 0) {
+        usi <<= 1;
+    }
+    printf("Размер unsigned short int: %zu байт\n", usi / 8);
+
+    // Вычисление размера int
+    while (i != 0) {
+        i <<= 1;
+    }
+    printf("Размер int: %zu байт\n", i / 8);
+
+    // Вычисление размера unsigned char
+    while (uc != 0) {
+        uc <<= 1;
+    }
+    printf("Размер unsigned char: %zu байт\n", uc / 8);
+
+    // Вычисление размера wchar_t
+    while (wc != 0) {
+        wc <<= 1;
+    }
+    printf("Размер wchar_t: %zu байт\n", wc / 8);
+
+    // Вычисление размера long long int
+    while (lli != 0) {
+        lli <<= 1;
+    }
+    printf("Размер long long int: %zu байт\n", lli / 8);
+
+    // Вычисление размера size_t
+    while (sz != 0) {
+        sz <<= 1;
+    }
+    printf("Размер size_t: %zu байт\n", sz / 8);
+
+    // Вычисление размера float
+    while (f != 0.0) {
+        f *= 2.0;
+    }
+    printf("Размер float: %zu байт\n", f / 8);
+
+    // Вычисление размера double
+    while (d != 0.0) {
+        d *= 2.0;
+    }
+    printf("Размер double: %zu байт\n", d / 8);
+
+    // Вычисление размера signed int
+    while (sint != 0) {
+        sint <<= 1;
+    }
+    printf("Размер signed int: %zu байт\n", sint / 8);
+
+    return 0;
+}
+
+
+
+
+
+
+#include <stdio.h>
+
+int main() {
+    int arr[] = {1, 5, 3, 7, 9, 2, 4, 6, 8};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int A, B;
+    int count = 0;
+
+    printf("Введите начало диапазона (A): ");
+    scanf("%d", &A);
+
+    printf("Введите конец диапазона (B): ");
+    scanf("%d", &B);
+
+    // Проверяем каждый элемент массива
+    for (int i = 0; i < size; i++) {
+        if (arr[i] >= A && arr[i] <= B) {
+            count++;
+        }
+    }
+
+    printf("Количество элементов в диапазоне [%d, %d]: %d\n", A, B, count);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[100];
+    int count = 0;
+    int firstCommaIndex = -1;
+    int lastCommaIndex = -1;
+
+    printf("Введите строку: ");
+    fgets(str, sizeof(str), stdin);
+
+    // Находим индекс первой запятой
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ',') {
+            firstCommaIndex = i;
+            break;
+        }
+    }
+
+    // Находим индекс последней запятой
+    for (int i = strlen(str) - 1; i >= 0; i--) {
+        if (str[i] == ',') {
+            lastCommaIndex = i;
+            break;
+        }
+    }
+
+    // Если запятые найдены, считаем слова между ними
+    if (firstCommaIndex != -1 && lastCommaIndex != -1) {
+        // Считаем слова между первой и последней запятой
+        for (int i = firstCommaIndex + 1; i < lastCommaIndex; i++) {
+            if (str[i] == ' ') {
+                count++;
+            }
+        }
+        count++; // Добавляем последнее слово
+
+        printf("Количество слов между первой и последней запятой: %d\n", count);
+    } else {
+        printf("В строке нет двух запятых.\n");
+    }
+
+    return 0;
+}
