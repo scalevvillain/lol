@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h> // Для функции rand()
+
+#define N 100 // Максимальный размер массива
+
+// Функция для заполнения массива случайными числами
+double* full_elements(double *ptr_array, int n) {
+    for (int i = 0; i < n; i++) {
+        ptr_array[i] = (double)rand() / RAND_MAX * 100; // Случайное число от 0 до 100
+    }
+    return ptr_array;
+}
+
+// Функция для печати элементов массива
+int put_elements(double *ptr_array, int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%.2lf ", ptr_array[i]); 
+    }
+    printf("\n");
+    return 0;
+}
+
+// Функция для обработки элементов массива (индивидуальный вариант)
+// Пример: Вычисление суммы элементов массива
+double* calc_elements(double *ptr_array, int n) {
+    double sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        sum += ptr_array[i];
+    }
+    printf("Сумма элементов массива: %.2lf\n", sum);
+    return ptr_array;
+}
+
+int main() {
+    double array[N]; 
+    int size;
+
+    printf("Введите размер массива > ");
+    scanf("%d", &size);
+
+    // Заполняем массив
+    full_elements(array, size);
+
+    // Печатаем массив
+    put_elements(array, size);
+
+    // Обрабатываем и печатаем массив 
+    calc_elements(array, size); 
+
+    return 0;
+}
