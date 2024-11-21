@@ -1,0 +1,70 @@
+#include<locale.h>
+#include<math.h>
+#include<stdlib.h>
+
+double* full_elements(double* ptr_array, int n) {
+    float step, y;
+    puts("Введите шаг функции:");
+    scanf("%f", &step);
+    int index = 0;
+    double end = 0;
+    for (int i = 0; i <= n; i++) end += step;
+    for (double x = 0.15; x <= end; x += step) {
+        if (index >= n) {
+            break;
+        }
+        y = x - 3 * pow(cos(1.04 * x), 2);
+        ptr_array[index] = y;
+        index++;
+    }
+    return ptr_array;
+}
+
+int put_elements(double* ptr_array, int n) {
+    printf("Элементы массива:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%.2f\n", ptr_array[i]);
+    }
+    printf("\n");
+    return 0;
+}
+
+double* calc_elements(double* ptr_array, int n) {
+    double proizv = 1;
+    for (int i = 0; i < n; i++) {
+        if (ptr_array[i] < 0) {
+            continue;
+        }
+        proizv *= (i + 1);
+    }
+    printf("Произведение порядковых положительных элементов: %f\n", proizv);
+    if (proizv != 1) {
+        printf("Все положительные элементы массива:\n");
+        for (int i = 0; i < n; i++) { // Изменение N на n
+            if (ptr_array[i] > 0) {
+                printf("%.2f\n", ptr_array[i]);
+            }
+        }
+    }
+    return ptr_array;
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+
+    int size;
+    double* ptr_array;
+
+    printf("Введите размер массива: ");
+    scanf("%d", &size);
+    ptr_array = (double*)malloc(size * sizeof(double));// выделение памяти под динам. массив
+    if (ptr_array == NULL) {
+        puts("Ошибка при выделении памяти.");
+        return -1;
+    }
+    full_elements(ptr_array, size);
+    put_elements(ptr_array, size);
+    calc_elements(ptr_array, size);
+    free(ptr_array);
+    return 0;
+}
