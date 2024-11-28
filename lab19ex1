@@ -5,21 +5,21 @@
 #include <locale.h>
 int main()
 {
- setlocale(LC_ALL, "RUS");
- task1();
+	setlocale(LC_ALL, "RUS");
+	task1();
 }
 
 int task1()
 {
- char fname[20] = "number.txt";
- FILE* out;
- puts("Создание файла");
- if ((out = fopen(fname, "wt")) == NULL)
- {
-  printf("Ошибка открытия файла для записи");
-  return 0;
- }
- fprintf(out, "%d\n%d\n%d\n", 5,12,56);
- fclose(out);
- return 1;
+	char fname[20] = "number.txt";
+	FILE* out;
+	puts("Создание файла");
+	if ((out = fopen(fname, "wt")) == NULL)
+	{
+		printf("Ошибка открытия файла для записи");
+		return 0;
+	}
+	fprintf(out, "%d\n%.2f\n", 5, 12.56);
+	fclose(out);
+	return 1;
 }
