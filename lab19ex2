@@ -1,68 +1,69 @@
 #include<locale.h>
 #include<math.h>
 #include<stdlib.h>
+#include <stdio.h>
 
 #define N 100
 
 int main()
 {
- setlocale(LC_ALL, "RUS");
- task2();
+	setlocale(LC_ALL, "RUS");
+	task2();
 }
 int task1() {
- char fname[20] = "num.txt";
- FILE* out;
- puts("Создание файла");
- if ((out = fopen(fname, "wt")) == NULL) {
-  printf("Ошибка открытия файла для записи");
-  return 0;
- }
- printf("Что ввести в файл? 1 - число 5, 2 - число 12,56\n");
- int a;
- scanf("%d", &a);
- if (a == 1) {
-  fprintf(out, "%d", 5);
- }
- fprintf(out, "%c", '\n');
- if (a == 2) {
-  fprintf(out, "%.2f", 12.56);
- }
- fclose(out);
+	char fname[20] = "num.txt";
+	FILE* out;
+	puts("Создание файла");
+	if ((out = fopen(fname, "wt")) == NULL) {
+		printf("Ошибка открытия файла для записи");
+		return 0;
+	}
+	printf("Что ввести в файл? 1 - число 5, 2 - число 12,56\n");
+	int a;
+	scanf("%d", &a);
+	if (a == 1) {
+		fprintf(out, "%d", 5);
+	}
+	fprintf(out, "%c", '\n');
+	if (a == 2) {
+		fprintf(out, "%.2f", 12.56);
+	}
+	fclose(out);
 }
 double* full_elements(double* ptr_array, int n) {
- float step, y;
- puts("Введите шаг функции:");
- scanf("%f", &step);
- int index = 0;
- double end = 0;
- for (int i = 0; i <= n; i++) end += step;
- for (double x = 0.15; x <= end; x += step) {
-  if (index >= n) {
-   break;
-  }
-  y = x - 3 * pow(cos(1.04 * x), 2);
-  ptr_array[index] = y;
-  index++;
- }
- return ptr_array;
+	float step, y;
+	puts("Введите шаг функции:");
+	scanf("%f", &step);
+	int index = 0;
+	double end = 0;
+	for (int i = 0; i <= n; i++) end += step;
+	for (double x = 0.15; x <= end; x += step) {
+		if (index >= n) {
+			break;
+		}
+		y = x - 3 * pow(cos(1.04 * x), 2);
+		ptr_array[index] = y;
+		index++;
+	}
+	return ptr_array;
 }
 int task2()
 {
- char fname[20] = "number.txt";
- int n = 0;
- double mass[N];
- FILE* out;
- puts("Создание файла");
- if ((out = fopen(fname, "wt")) == NULL)
- {
-  printf("Ошибка открытия файла для записи");
-  return 0;
- }
- puts("выбор кол-ва\nV");
- scanf("%d", &n);
- full_elements(mass, n);
- for (int i = 0; i < n; i++) fprintf(out, "%lf\n", mass[i]);
- //end
- fclose(out);
- return 1;
+	char fname[20] = "number.txt";
+	int n = 0;
+	double mass[N];
+	FILE* out;
+	puts("Создание файла");
+	if ((out = fopen(fname, "wt")) == NULL)
+	{
+		printf("Ошибка открытия файла для записи");
+		return 0;
+	}
+	puts("выбор кол-ва\nV");
+	scanf("%d", &n);
+	full_elements(mass, n);
+	for (int i = 0; i < n; i++) fprintf(out, "%lf\n", mass[i]);
+	//end
+	fclose(out);
+	return 1;
 }
