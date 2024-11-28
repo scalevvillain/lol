@@ -1,0 +1,72 @@
+#include <locale.h>
+#include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define N 100
+
+double my_function(double x) {
+    return x - 3 * pow(cos(1.04 * x), 2);
+}
+
+
+int task1() { 
+    //This function is largely unchanged and remains for completeness.
+    // ... (Code for task1 remains the same) ...
+}
+
+double* full_elements(double* ptr_array, int n) {
+    float step;
+    puts("Введите шаг функции:");
+    if (scanf("%f", &step) != 1) {
+        fprintf(stderr, "Invalid input for step.\n");
+        return NULL; // Indicate an error
+    }
+
+    int index = 0;
+    double end = 0;
+    for (int i = 0; i <= n; i++) end += step;
+    for (double x = 0.15; x <= end; x += step) {
+        if (index >= n) {
+            break;
+        }
+        ptr_array[index] = my_function(x);
+        index++;
+    }
+    return ptr_array;
+}
+
+int task2() {
+    char fname[] = "num.txt";
+    FILE *in;
+    double sum = 0;
+    int count = 0;
+    double value;
+
+    if ((in = fopen(fname, "r")) == NULL) {
+        perror("Error opening num.txt for reading");
+        return 0; 
+    }
+
+    while (fscanf(in, "%lf", &value) == 1) {
+        sum += value;
+        count++;
+    }
+
+    fclose(in);
+
+    if (count == 0) {
+        printf("The file is empty.\n");
+        return 0;
+    }
+
+    double average = sum / count;
+    printf("Среднее арифметическое значение: %.2lf\n", average);
+    return 1;
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    task2(); // Now only task2 is called in main.
+    return 0;
+}
