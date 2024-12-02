@@ -1,0 +1,54 @@
+
+import telebot
+import random
+
+bot = telebot.TeleBot('YOUR_TOKEN')
+
+def start_game(message):
+    secret_number = random.randint(1, 100)
+    user_data = bot.get_chat(message.chat.id)
+    user_data['secret_number'] = secret_number
+    user_data['attempts'] = 15
+    user_data['games_played'] = user_data.get('games_played', 0) + 1
+    user_data['wins'] = user_data.get('wins', 0)
+    user_data['losses'] = user_data.get('losses', 0)
+    bot.set_chat_data(message.chat.id, user_data)
+    bot.reply_to(message, "Я загадал число от 1 до 100. У тебя есть 15 попыток, чтобы угадать.")
+
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "Привет! Давай сыграем в игру 'Угадай число'.")
+    start_game(message)
+
+@bot.message_handler(func=lambda message: True)
+def guess_number(message):
+    user_data = bot.get_chat(message.chat.id)
+    secret_number = user_data['secret_number']
+    attempts = user_data['attempts']
+
+    try:
+        guess = int(message.text)
+        if guess < secret_number:
+            bot.reply_to(message, "Загаданное число больше.")
+        elif guess > secret_number:
+            bot.reply_to(message, "Загаданное число меньше.")
+        else:
+            bot.reply_to(message, "Поздравляю! Ты угадал!")
+            user_data['wins'] += 1
+        attempts -= 1
+        user_data['attempts'] = attempts
+        bot.set_chat_data(message.chat.id, user_data)
+        if attempts == 0:
+            bot.reply_to(message, f"Попытки закончились. Загаданное число было {secret_number}.")
+            user_data['losses'] += 1
+            bot.set_chat_data(message.chat.id, user_data)
+    except ValueError:
+        bot.reply_to(message, "Пожалуйста, введите число.")
+
+@bot.message_handler(commands=['stats'])
+def show_stats(message):
+    user_data = bot.get_chat(message.chat.id)
+    games_played = user_data.get('games_played', 0)
+    wins = user_data.get('wins', 0)
+    losses = user_data.get('losses', 0)
+    bot.reply_to(message, f"Ты сыграл {games_played} игр, из них выиграл {wins} и проиграл {losses}.")
