@@ -1,0 +1,141 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <locale.h>
+
+// Структура для хранения информации о линии
+typedef struct {
+    char line[20];     // Название линии
+    char time[9];      // Время
+    int speed;         // Скорость (шт/мин)
+    int volume;        // Объем (мл)
+    char status[20];   // Статус
+} EquipmentData;
+
+// Функция для проверки диапазона значений
+int check_range(int speed, int volume) {
+    // Определим допустимые диапазоны
+    if (speed < 50 || speed > 200) {
+        return 0;  // Не соответствует скорости
+    }
+    if (volume < 200 || volume > 1000) {
+        return 0;  // Не соответствует объему
+    }
+    return 1;  // Все в пределах нормы
+}
+
+// Функция для записи лога о сбое
+void log_error(char* message) {
+    FILE* log_file = fopen("error_log.txt", "a");
+
+    time_t t = time(NULL);
+    struct tm* tm_info = localtime(&t);
+    char timestamp[26];
+    strftime(timestamp, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+
+    fprintf(log_file, "[%s] Ошибка: %s\n", timestamp, message);
+    fclose(log_file);
+}
+
+// Функция для записи данных о простое
+void log_downtime(EquipmentData* data) {
+    FILE* downtime_file = fopen("downtime_log.txt", "a");
+
+    fprintf(downtime_file, "Линия: %s, Время: %s, Скорость: %d шт/мин, Объем: %d мл, Статус: %s\n",
+        data->line, data->time, data->speed, data->volume, data->status);
+    fclose(downtime_file);
+}
+
+// Функция для мониторинга состояния оборудования
+void monitor_equipment() {
+    EquipmentData data;
+
+    while (1) {
+        printf("Введите данные о линии (формат: Линия;Время;Скорость;Объем;Статус): ");
+        scanf("%s", data.line);
+        scanf("%s", data.time);
+        scanf("%d", &data.speed);
+        scanf("%d", &data.volume);
+        scanf("%s", data.status);
+
+        // Проверка данных на соответствие допустимым диапазонам
+        if (check_range(data.speed, data.volume)) {
+            printf("Данные корректны. Оборудование работает нормально.\n");
+        }
+        else {
+            printf("Ошибка! Данные не соответствуют допустимым диапазонам.\n");
+            log_error("Неверные данные скорости или объема.");
+            log_downtime(&data);
+        }
+
+        // Предложение продолжить или завершить
+        char choice;
+        printf("Хотите продолжить мониторинг? (y/n): ");
+        getchar(); // Для захвата лишнего символа новой строки после ввода числа
+        choice = getchar();
+        if (choice == 'n') {
+            break;
+        }
+    }
+}
+
+// Функция для тестирования системы с сгенерированными данными
+void generate_test_data() {
+    FILE* test_file = fopen("test_data.txt", "w");
+
+    // Генерация различных наборов данных
+    for (int i = 0; i < 10; i++) {
+        int speed = rand() % 300;  // Случайная скорость от 0 до 300
+        int volume = rand() % 1200; // Случайный объем от 0 до 1200
+        fprintf(test_file, "Линия-%d;12:00:00;%d шт/мин;%d мл;Работает\n", i + 1, speed, volume);
+    }
+    fclose(test_file);
+    printf("Тестовые данные успешно сгенерированы в файл test_data.txt\n");
+}
+
+// Функция для анализа логов работы системы
+void analyze_logs() {
+    FILE* log_file = fopen("error_log.txt", "r");
+
+    char line[256];
+    printf("Лог ошибок:\n");
+    while (fgets(line, sizeof(line), log_file)) {
+        printf("%s", line);
+    }
+    fclose(log_file);
+}
+
+int main() {
+    setlocale(LC_ALL, "ru");
+    int mode;
+    while (1) {
+
+        printf("Программа мониторинга промышленного оборудования\n");
+        printf("Выберите режим работы:\n");
+        printf("1 - Мониторинг состояния оборудования\n");
+        printf("2 - Генерация тестовых данных\n");
+        printf("3 - Анализ логов\n");
+        printf("Введите номер режима: ");
+        scanf("%d", &mode);
+
+        switch (mode) {
+        case 1:
+            monitor_equipment();
+            break;
+        case 2:
+            generate_test_data();
+            break;
+        case 3:
+            analyze_logs();
+            break;
+        default:
+            printf("Некорректный выбор.\n");
+            break;
+        }
+    }
+
+
+    return 0;
+}
