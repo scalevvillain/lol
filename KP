@@ -5,6 +5,12 @@
 #include <time.h>
 #include <locale.h>
 
+// Константы для диапазонов
+#define MIN_SPEED 50    // Минимальная допустимая скорость
+#define MAX_SPEED 200   // Максимальная допустимая скорость
+#define MIN_VOLUME 200  // Минимальный допустимый объем
+#define MAX_VOLUME 1000 // Максимальный допустимый объем
+
 // Структура для хранения информации о линии
 typedef struct {
     char line[20];     // Название линии
@@ -14,98 +20,12 @@ typedef struct {
     char status[20];   // Статус
 } EquipmentData;
 
-// Функция для проверки диапазона значений
-int check_range(int speed, int volume) {
-    // Определим допустимые диапазоны
-    if (speed < 50 || speed > 200) {
-        return 0;  // Не соответствует скорости
-    }
-    if (volume < 200 || volume > 1000) {
-        return 0;  // Не соответствует объему
-    }
-    return 1;  // Все в пределах нормы
-}
-
-// Функция для записи лога о сбое
-void log_error(char* message) {
-    FILE* log_file = fopen("error_log.txt", "a");
-
-    time_t t = time(NULL);
-    struct tm* tm_info = localtime(&t);
-    char timestamp[26];
-    strftime(timestamp, 26, "%Y-%m-%d %H:%M:%S", tm_info);
-
-    fprintf(log_file, "[%s] Ошибка: %s\n", timestamp, message);
-    fclose(log_file);
-}
-
-// Функция для записи данных о простое
-void log_downtime(EquipmentData* data) {
-    FILE* downtime_file = fopen("downtime_log.txt", "a");
-
-    fprintf(downtime_file, "Линия: %s, Время: %s, Скорость: %d шт/мин, Объем: %d мл, Статус: %s\n",
-        data->line, data->time, data->speed, data->volume, data->status);
-    fclose(downtime_file);
-}
-
-// Функция для мониторинга состояния оборудования
-void monitor_equipment() {
-    EquipmentData data;
-
-    while (1) {
-        printf("Введите данные о линии (формат: Линия;Время;Скорость;Объем;Статус): ");
-        scanf("%s", data.line);
-        scanf("%s", data.time);
-        scanf("%d", &data.speed);
-        scanf("%d", &data.volume);
-        scanf("%s", data.status);
-
-        // Проверка данных на соответствие допустимым диапазонам
-        if (check_range(data.speed, data.volume)) {
-            printf("Данные корректны. Оборудование работает нормально.\n");
-        }
-        else {
-            printf("Ошибка! Данные не соответствуют допустимым диапазонам.\n");
-            log_error("Неверные данные скорости или объема.");
-            log_downtime(&data);
-        }
-
-        // Предложение продолжить или завершить
-        char choice;
-        printf("Хотите продолжить мониторинг? (y/n): ");
-        getchar(); // Для захвата лишнего символа новой строки после ввода числа
-        choice = getchar();
-        if (choice == 'n') {
-            break;
-        }
-    }
-}
-
-// Функция для тестирования системы с сгенерированными данными
-void generate_test_data() {
-    FILE* test_file = fopen("test_data.txt", "w");
-
-    // Генерация различных наборов данных
-    for (int i = 0; i < 10; i++) {
-        int speed = rand() % 300;  // Случайная скорость от 0 до 300
-        int volume = rand() % 1200; // Случайный объем от 0 до 1200
-        fprintf(test_file, "Линия-%d;12:00:00;%d шт/мин;%d мл;Работает\n", i + 1, speed, volume);
-    }
-    fclose(test_file);
-    printf("Тестовые данные успешно сгенерированы в файл test_data.txt\n");
-}
-
-// Функция для анализа логов работы системы
-void analyze_logs() {
-    FILE* log_file = fopen("error_log.txt", "r");
-
-    char line[256];
-    printf("Лог ошибок:\n");
-    while (fgets(line, sizeof(line), log_file)) {
-        printf("%s", line);
-    }
-    fclose(log_file);
-}
+int check_range(int speed, int volume); // Функция для проверки диапазона значений
+int log_error(char* message); // Функция для записи лога о сбое
+int log_downtime(EquipmentData* data); // Функция для записи данных о простое
+int monitor_equipment(); // Функция для мониторинга состояния оборудования
+int generate_test_data(); // Функция для тестирования системы с сгенерированными данными
+int analyze_logs(); // Функция для анализа логов работы системы
 
 int main() {
     setlocale(LC_ALL, "ru");
@@ -117,18 +37,28 @@ int main() {
         printf("1 - Мониторинг состояния оборудования\n");
         printf("2 - Генерация тестовых данных\n");
         printf("3 - Анализ логов\n");
+        printf("4 - Выход\n");
         printf("Введите номер режима: ");
         scanf("%d", &mode);
 
         switch (mode) {
         case 1:
-            monitor_equipment();
+            if (monitor_equipment() == -1) {
+                printf("Ошибка при мониторинге оборудования.\n");
+            }
             break;
         case 2:
-            generate_test_data();
+            if (generate_test_data() == -1) {
+                printf("Ошибка при генерации тестовых данных.\n");
+            }
             break;
         case 3:
-            analyze_logs();
+            if (analyze_logs() == -1) {
+                printf("Ошибка при анализе логов.\n");
+            }
+            break;
+        case 4:
+            return 0;
             break;
         default:
             printf("Некорректный выбор.\n");
@@ -136,6 +66,122 @@ int main() {
         }
     }
 
-
     return 0;
+}
+
+int check_range(int speed, int volume) {
+    // Проверка диапазонов с использованием буквенных обозначений
+    if (speed < MIN_SPEED || speed > MAX_SPEED) {
+        return 0;  // Не соответствует скорости
+    }
+    if (volume < MIN_VOLUME || volume > MAX_VOLUME) {
+        return 0;  // Не соответствует объему
+    }
+    return 1;  // Все в пределах нормы
+}
+
+int log_error(char* message) {
+    FILE* log_file = fopen("error_log.txt", "a");
+    if (!log_file) {
+        return -1;  // Ошибка открытия файла
+    }
+
+    time_t t = time(NULL);
+    struct tm* tm_info = localtime(&t);
+    char timestamp[26];
+    strftime(timestamp, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+
+    fprintf(log_file, "[%s] Ошибка: %s\n", timestamp, message);
+    fclose(log_file);
+    return 0;  // Успешная запись
+}
+
+int log_downtime(EquipmentData* data) {
+    FILE* downtime_file = fopen("downtime_log.txt", "a");
+    if (!downtime_file) {
+        return -1;  // Ошибка открытия файла
+    }
+
+    fprintf(downtime_file, "Линия: %s, Время: %s, Скорость: %d шт/мин, Объем: %d мл, Статус: %s\n",
+        data->line, data->time, data->speed, data->volume, data->status);
+    fclose(downtime_file);
+    return 0;  // Успешная запись
+}
+
+int monitor_equipment() {
+    EquipmentData data;
+
+    while (1) {
+        printf("Введите данные о линии (формат: Линия;Время;Скорость;Объем;Статус): ");
+        scanf("%s", data.line);
+        scanf("%s", data.time);
+        scanf("%d", &data.speed);
+        scanf("%d", &data.volume);
+
+        // Проверка данных на соответствие допустимым диапазонам и автоматическое определение статуса
+        if (check_range(data.speed, data.volume)) {
+            strcpy(data.status, "Работает");
+            printf("Линия: %s, Статус: %s, Скорость: %d шт/мин, Объем: %d мл. Оборудование работает нормально.\n",
+                data.line, data.status, data.speed, data.volume);
+        }
+        else {
+            strcpy(data.status, "Не работает");
+            printf("Линия: %s, Статус: %s, Скорость: %d шт/мин, Объем: %d мл. Ошибка! Данные не соответствуют допустимым диапазонам.\n",
+                data.line, data.status, data.speed, data.volume);
+            if (log_error("Неверные данные скорости или объема.") == -1) {
+                return -1;  // Ошибка при записи в лог
+            }
+            if (log_downtime(&data) == -1) {
+                return -1;  // Ошибка при записи в лог простоя
+            }
+        }
+
+        // Предложение продолжить или завершить
+        char choice;
+        printf("Хотите продолжить мониторинг? (y/n): ");
+        getchar(); // Для захвата лишнего символа новой строки после ввода числа
+        choice = getchar();
+        if (choice == 'n') {
+            break;
+        }
+    }
+
+    return 0;  // Успешное завершение мониторинга
+}
+
+int generate_test_data() {
+    FILE* test_file = fopen("test_data.txt", "w");
+    if (!test_file) {
+        return -1;  // Ошибка открытия файла
+    }
+
+    // Генерация различных наборов данных
+    for (int i = 0; i < 10; i++) {
+        int speed = rand() % 300;  // Случайная скорость от 0 до 300
+        int volume = rand() % 1200; // Случайный объем от 0 до 1200
+        if (check_range(speed, volume)) {
+            fprintf(test_file, "Линия-%d;12:00:00;%d шт/мин;%d мл;Работает\n", i + 1, speed, volume);
+        }
+        else {
+            fprintf(test_file, "Линия-%d;12:00:00;%d шт/мин;%d мл;Не работает\n", i + 1, speed, volume);
+        }
+    }
+    fclose(test_file);
+    printf("Тестовые данные успешно сгенерированы в файл test_data.txt\n");
+    return 0;  // Успешная генерация данных
+}
+
+int analyze_logs() {
+    FILE* log_file = fopen("error_log.txt", "r");
+    if (!log_file) {
+        return -1;  // Ошибка открытия файла
+    }
+
+    char line[256];
+    printf("Лог ошибок:\n");
+    while (fgets(line, sizeof(line), log_file)) {
+        printf("%s", line);
+    }
+    fclose(log_file);
+    return 0;  // Успешный анализ логов
 }
