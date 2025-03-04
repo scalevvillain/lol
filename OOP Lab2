@@ -1,0 +1,120 @@
+#include <iostream>
+#include <vector>
+#include <locale.h>
+#include <algorithm>
+
+void fillChessboard(std::vector<std::vector<int>>& matrix) {
+    int n = matrix.size();
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            matrix[i][j] = (i + j) % 2;
+        }
+    }
+}
+
+void processArray(std::vector<double>& arr) {
+    double maxElement = *std::max_element(arr.begin(), arr.end());
+    std::cout << "Максимальный элемент: " << maxElement << std::endl;
+
+    double sumEven = 0;
+    for (double num : arr) {
+        if (static_cast<int>(num) % 2 == 0) {
+            sumEven += num;
+        }
+    }
+    std::cout << "Сумма четных элементов: " << sumEven << std::endl;
+
+    std::cout << "Отрицательные элементы в обратном порядке: ";
+    for (int i = arr.size() - 1; i >= 0; --i) {
+        if (arr[i] < 0) {
+            std::cout << arr[i] << " ";
+        }
+    }
+    std::cout << std::endl;
+}
+
+int partition(std::vector<int>& arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; ++j) {
+        if (arr[j] <= pivot) {
+            ++i;
+            std::swap(arr[i], arr[j]);
+        }
+    }
+    std::swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(std::vector<int>& arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    int choice;
+    std::cout << "Выберите задание:\n1. Task1 (Обработка массива)\n2. Task2 (Шахматная доска)\n3. Task3 (Быстрая сортировка)\n";
+    std::cin >> choice;
+
+    switch (choice) {
+    case 1: {
+        int N;
+        std::cout << "Введите количество элементов массива: ";
+        std::cin >> N;
+
+        std::vector<double> arr(N);
+        std::cout << "Введите элементы массива: ";
+        for (int i = 0; i < N; ++i) {
+            std::cin >> arr[i];
+        }
+
+        processArray(arr);
+        break;
+    }
+    case 2: {
+        int n;
+        std::cout << "Введите размерность матрицы (n): ";
+        std::cin >> n;
+
+        std::vector<std::vector<int>> chessboard(n, std::vector<int>(n));
+        fillChessboard(chessboard);
+
+        std::cout << "Матрица в шахматном порядке:\n";
+        for (const auto& row : chessboard) {
+            for (int val : row) {
+                std::cout << val << " ";
+            }
+            std::cout << std::endl;
+        }
+        break;
+    }
+    case 3: {
+        std::vector<int> arr = { 64, 34, 25, 12, 22, 11, 90 };
+        int n = arr.size();
+
+        std::cout << "Исходный массив: ";
+        for (int i = 0; i < n; ++i) {
+            std::cout << arr[i] << " ";
+        }
+        std::cout << std::endl;
+
+        quickSort(arr, 0, n - 1);
+
+        std::cout << "Отсортированный массив: ";
+        for (int i = 0; i < n; ++i) {
+            std::cout << arr[i] << " ";
+        }
+        std::cout << std::endl;
+        break;
+    }
+    default:
+        std::cout << "Недопустимый выбор.\n";
+    }
+
+    return 0;
+}
