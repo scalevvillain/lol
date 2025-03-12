@@ -41,3 +41,27 @@ int main() {
     }
    
 }
+
+
+
+
+
+
+
+int task2() {
+    double number, error;
+
+    printf("Введите число: ");
+    scanf("%lf", &number);
+
+    printf("Введите абсолютную погрешность: ");
+    scanf("%lf", &error);
+
+    number = round(number × 100.0) / 100.0;
+
+    printf("Округленное число: %.2lf\n", number);
+    printf("Абсолютная погрешность: ±%.5lf\n", error);
+
+    return 0;
+}
+
