@@ -65,3 +65,24 @@ int task2() {
     return 0;
 }
 
+
+
+
+
+
+int task3() {
+    double true_value;
+
+    printf("Введите значение: ");
+    scanf("%lf", &true_value);
+
+    double absolute_error = 0.005 × true_value;
+    double relative_error = absolute_error / fabs(true_value);
+
+    printf("Истинное значение: %.5f\n", true_value);
+    printf("Абсолютная погрешность: %f\n", absolute_error);
+    printf("Относительная погрешность: %f\n", relative_error);
+
+    return 0;
+}
+
