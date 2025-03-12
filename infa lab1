@@ -57,10 +57,10 @@ int task2() {
     printf("Введите абсолютную погрешность: ");
     scanf("%lf", &error);
 
-    number = round(number × 100.0) / 100.0;
+    number = round(number * 100.0) / 100.0;
 
     printf("Округленное число: %.2lf\n", number);
-    printf("Абсолютная погрешность: ±%.5lf\n", error);
+    printf("Абсолютная погрешность: ±%.4lf\n", error);
 
     return 0;
 }
@@ -76,10 +76,10 @@ int task3() {
     printf("Введите значение: ");
     scanf("%lf", &true_value);
 
-    double absolute_error = 0.005 × true_value;
+    double absolute_error = 0.005 * true_value;
     double relative_error = absolute_error / fabs(true_value);
 
-    printf("Истинное значение: %.5f\n", true_value);
+    printf("Истинное значение: %.2f\n", true_value);
     printf("Абсолютная погрешность: %f\n", absolute_error);
     printf("Относительная погрешность: %f\n", relative_error);
 
