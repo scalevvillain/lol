@@ -4,27 +4,27 @@
 
 int main() {
     setlocale(LC_CTYPE, "RUS");
-    task1();
-    return 0;
-}
+   
+   
 
-int task1() {
+
+
     double numerator, denominator;
     double square_root;
 
     printf("Введите числитель для деления: ");
-    scanf("%lf", &numerator);
+    scanf_s("%lf", &numerator);
     printf("Введите знаменатель для деления: ");
-    scanf("%lf", &denominator);
+    scanf_s("%lf", &denominator);
 
     double division = numerator / denominator; // вычисление деления
 
     printf("Введите число для вычисления квадратного корня: ");
-    scanf("%lf", &square_root);
+    scanf_s("%lf", &square_root);
 
     double sqrt_result = sqrt(square_root); // вычисление квадратного корня
 
-    printf("Результат деления %.2lf / %.2lf = %.2lf\n", numerator, denominator, division);
+    printf("Результат деления %.3lf / %.3lf = %.3lf\n", numerator, denominator, division);
     printf("Квадратный корень из %.2lf = %.2lf\n", square_root, sqrt_result);
 
     double division_error = fabs(division);
@@ -32,10 +32,12 @@ int task1() {
 
     if (division_error < sqrt_error) {
         printf("Выражение деления более точно.\n");
-    } else if (sqrt_error < division_error) {
+    }
+    else if (sqrt_error < division_error) {
         printf("Выражение с квадратным корнем более точно.\n");
-    } else {
+    }
+    else {
         printf("Оба выражения имеют одинаковую точность.\n");
     }
-    return 0;
+   
 }
