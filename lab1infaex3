@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+int count_decimal_places(char *input) {
+    char *dot = strchr(input, '.');
+    if (dot == NULL) return 0;
+    return strlen(dot + 1);
+}
+
+int task3() {
+    printf("---Задание 3---\n");
+    char input[100];
+    printf("Введите приближенное число: ");
+    scanf("%s", input);
+
+    double true_value = atof(input);
+    int n = count_decimal_places(input);
+
+    double absolute_error = pow(10, -n) / 2;
+    double relative_error = absolute_error / fabs(true_value);
+    printf("---\n");
+
+    printf("Приближенное значение: %.5f\n", true_value);
+    printf("Количество знаков после запятой: %d\n", n);
+    printf("Предельная абсолютная погрешность: %.5f\n", absolute_error);
+    printf("Предельная относительная погрешность: %.5f\n", relative_error);
+
+    return 0;
+}
+
+int main() {
+    task3();
+    return 0;
+}
