@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <locale.h>
 
-int count_decimal_places(char *input) {
-    char *dot = strchr(input, '.');
+int count_decimal_places(char* input) {
+    char* dot = strchr(input, '.');
     if (dot == NULL) return 0;
     return strlen(dot + 1);
 }
-
 int task2() {
-    printf("---Задание 2---\n");
+    setlocale(LC_CTYPE, "RUS");
     char input[100];
     double b;
 
@@ -28,11 +28,8 @@ int task2() {
 
     int reliable_digits = (int)(-log10(relative_error));
     if (reliable_digits < 0) reliable_digits = 0;
-
     double rounding_unit = pow(10, -reliable_digits);
     double rounded_x = round(x / rounding_unit) * rounding_unit;
-
-    printf("---\n");
     printf("Исходное число: %.6f\n", x);
     printf("Количество знаков после запятой: %d\n", n);
     printf("Относительная погрешность (D): %.6f\n", relative_error);
