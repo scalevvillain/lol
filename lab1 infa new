@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+int count_decimal_places(char *input) {
+    char *dot = strchr(input, '.');
+    if (dot == NULL) return 0;
+    return strlen(dot + 1);
+}
+
+int task2() {
+    printf("---Задание 2---\n");
+    char input[100];
+    double b;
+
+    printf("Введите x: ");
+    scanf("%s", input);
+
+    double x = atof(input);
+    int n = count_decimal_places(input);
+
+    printf("\nВведите b в процентах: ");
+    scanf("%lf", &b);
+
+    double relative_error = b / 100;
+    double absolute_error = relative_error * fabs(x);
+
+    int reliable_digits = (int)(-log10(relative_error));
+    if (reliable_digits < 0) reliable_digits = 0;
+
+    double rounding_unit = pow(10, -reliable_digits);
+    double rounded_x = round(x / rounding_unit) * rounding_unit;
+
+    printf("---\n");
+    printf("Исходное число: %.6f\n", x);
+    printf("Количество знаков после запятой: %d\n", n);
+    printf("Относительная погрешность (D): %.6f\n", relative_error);
+    printf("Абсолютная погрешность: %.6f\n", absolute_error);
+    printf("Количество достоверных знаков: %d\n", reliable_digits);
+    printf("Округленное число с учетом достоверных знаков: %.6f\n", rounded_x);
+
+    return 0;
+}
+
+int main() {
+    task2();
+    return 0;
+}
